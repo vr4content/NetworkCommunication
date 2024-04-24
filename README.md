@@ -22,7 +22,7 @@ You can configure the ip and port and start ot stop listening
 
 This script emulates a constant flow of data to a UDP port. The data structure is following the json schema provided.
 
-![image](https://github.com/JuanObiJuan/NetworkCommunication/assets/1729541/3d18dc2e-c8be-42ed-93f5-1c46125ee578)
+![image](https://github.com/JuanObiJuan/NetworkCommunication/assets/1729541/8db2161e-e545-430e-aa4d-0b88c7a69adf)
 
 You can configure ports, ip address. To tweak the refresh rate you can modify in the script the sleeping time.
 
