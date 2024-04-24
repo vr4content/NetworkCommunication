@@ -2,7 +2,7 @@
 
 This repository contains a series of scripts to help to move data between different softwares using python and UDP packages
 
-## UDP Clock TX
+## UDPClockTx.py
 
 This is a basic script to send constantly the system time to a UDP port
 
@@ -10,7 +10,7 @@ This is a basic script to send constantly the system time to a UDP port
 
 You can configure the ip and port and start ot stop the transmission
 
-## UDP Clock RX
+## UDPClockRx.py
 
 This cript is able to connect to a UDP port and listen for a click data
 
