@@ -4,9 +4,9 @@ import socket
 import threading
 from datetime import datetime, time
 from time import sleep
-from tkinter import Tk, Label, Button, Entry, StringVar, Frame, IntVar
+from tkinter import Tk, Label, Button, Entry, StringVar, Frame, IntVar, Checkbutton, Scrollbar, BooleanVar
 
-from pylsl import StreamInfo, StreamOutlet
+from pylsl import StreamInfo, StreamOutlet, local_clock, pylsl
 
 
 #UDP clock rx functions
@@ -128,6 +128,23 @@ def push_data(property_name):
                 property_dict[property_name]["y"],
                 property_dict[property_name]["z"]
             ]
+            #TODO find the right conversion between udp clock and local_clock from lsl
+            #Check what is excactly local_clock
+            stamp = local_clock() - 0.125
+            #TODO One option for sure is to add an offset to the local clock
+            stamp = local_clock() - 0.125
+            #TODO and then do outlet.push_sample(mysample, stamp)
+            #TODO another option is to change the local clock of this machine based on the udp clock received
+            if send_timecode_var.get():
+                #user wants to attach time sync with the stream
+                current_datetime = datetime.datetime.now()
+                timestamp = pylsl.local_clock()
+                if False: #udp clock activate
+                    timestamp = current_datetime.timestamp()
+                outlet_info.push_sample(data, timestamp)
+            else:
+                outlet_info.push_sample(data)
+            #option with no timestamp
             outlet_info.push_sample(data)
             # Update the GUI
             lsl_data_labels[property_name].config(text=f"{property_name}: x={data[0]}, y={data[1]}, z={data[2]}")
@@ -249,6 +266,10 @@ lsl_data_display_frame = Frame(root, borderwidth=2, relief="solid", padx=5, pady
 lsl_data_display_frame.pack(padx=10, pady=10)
 
 lsl_data_labels = {}
+
+send_timecode_var = BooleanVar(value=False)
+send_timecode_checkbox = Checkbutton(root, text="Send Timecode", var=send_timecode_var, onvalue=True, offvalue=False, font=('Helvetica', 12))
+send_timecode_checkbox.pack(padx=10, pady=10)
 
 lsl_ui_frame = Frame(root)
 lsl_ui_frame.pack(padx=10, pady=10)
