@@ -9,6 +9,8 @@ from tkinter import Tk, Label, Button, Entry, StringVar, Frame
 def send_data():
     global running
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
     target_ip = ip_var.get()
     target_port = int(port_var.get())
 
