@@ -1,18 +1,27 @@
 import socket
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 from tkinter import Tk, Label, Button, Entry, StringVar
 
 def receive_time():
     global running
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
     sock.bind((ip_var.get(), int(port_var.get())))
 
     try:
         while running:
             data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
-            now = data.decode()
-            time_label.config(text=now)
+            received_time = data.decode()
+            received_dt = datetime.strptime(received_time, '%Y-%m-%d %H:%M:%S.%f')
+
+            now = datetime.now()
+            time_difference = now - received_dt
+
+            display_time = f"Received Time: {received_time}\nLocal Time: {now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}\nOffset: {time_difference}"
+
+            time_label.config(text=display_time)
     finally:
         sock.close()
 
