@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "propertyName": "HeadPlaceholder_Blueprint_Position",
+      "x": -197.7,
+      "y": 197.78,
+      "z": 297.40
+    },
+    {
+      "propertyName": "HeadPlaceholder_Blueprint_Rotation",
+      "x": 79.63,
+      "y": 79.63,
+      "z": 79.65
+    }
+  ]
+}
