@@ -53,7 +53,10 @@ This script combines three tasks:
 
 You can configure if you want to embed timecode data in the streams and the sampling ratio or samples per second.
 
-After this script replicates the lsl streams, you can open any sofwtare LSL friendly to visualize or record streams.
+After this script replicates the lsl streams, you can open any sofwtare LSL friendly to visualize or record streams. In this example I'm using Open Ephys:
+
+![image](https://github.com/JuanObiJuan/NetworkCommunication/assets/1729541/31469604-e097-48a9-8c18-1a8e28f4192c)
+
 
 
 
