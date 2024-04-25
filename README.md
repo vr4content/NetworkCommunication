@@ -32,16 +32,17 @@ This cript is able to connect to a UDP port and listen for a clock data
 
 You can configure the ip and port and start ot stop listening
 
-##UE_Emulator.py
+## UE_Emulator.py
 
 This script emulates a constant flow of data to a UDP port. The data structure is following the json schema provided.
 
-![image](https://github.com/JuanObiJuan/NetworkCommunication/assets/1729541/8db2161e-e545-430e-aa4d-0b88c7a69adf)
+![image](https://github.com/JuanObiJuan/NetworkCommunication/assets/1729541/ed21329f-24a4-4346-b663-b22a60419552)
 
 You can configure ports, ip address.
+
 You can also modify on the fly the sampling ratio with the slider from 1 sample per second to 100, this emulates the changing nature of the samples of Unreal Engine (frames per second).
 
-##UDP_2_LSL.py
+## UDP_2_LSL.py
 
 This script combines three tasks:
 - receives an UDP clock
