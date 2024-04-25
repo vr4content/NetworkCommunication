@@ -10,7 +10,7 @@ Data UDP format it will change depending on the requirements, by now you can fin
 
 Depends on the script, i.e. UDP_2_LSL requires LSL library already installed in your system, you can install it with brew,pip or others depending on your os
 
-### IPs addresses and concerns about Broadcasting/Multicasting/EndToEnd
+## Broadcasting/Multicasting/EndToEnd
 
 While is possible to broadcast and multicast udp packages in the network, network capacity can become easily flooded with data (even in a fast Local network).
 Communication success it will depend then on the weakest network device (computer(headset/mobile/...) and not only the main router/switch offering the net architecture.
