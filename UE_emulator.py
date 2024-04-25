@@ -4,7 +4,7 @@ import socket
 import threading
 from datetime import datetime
 import time
-from tkinter import Tk, Label, Button, Entry, StringVar, Frame
+from tkinter import Tk, Label, Button, Entry, StringVar, Frame, Scale, HORIZONTAL
 
 def send_data():
     global running
@@ -34,8 +34,10 @@ def send_data():
             message = json.dumps(data)
             sock.sendto(message.encode(), (target_ip, target_port))
 
-            #tx frequency (every 100 miliseconds)
-            time.sleep(0.1)
+            # Sleep interval based on the slider value
+            frequency = frequency_slider.get()
+            time.sleep(1.0 / frequency)
+
     finally:
         sock.close()
 
@@ -62,7 +64,9 @@ def update_ui():
         label_list[row_index][1].config(text=str(prop[propertyName]["x"]))  # Update X label
         label_list[row_index][2].config(text=str(prop[propertyName]["y"]))  # Update Y label
         label_list[row_index][3].config(text=str(prop[propertyName]["z"]))  # Update Z label
-
+    # Update the samples per second display
+    frequency = frequency_slider.get()
+    time_label.config(text=f"Samples/Sec")
 
 # Main UI setup
 root = Tk()
@@ -116,14 +120,21 @@ for row_index, prop in enumerate(properties):
         row_labels.append(lab)
     label_list.append(row_labels)
 
+# Create a slider for controlling the frequency
+frequency_slider = Scale(root, from_=1, to=100, orient=HORIZONTAL, label="Samples/Sec", length=300)
+frequency_slider.set(18)  # Default frequency set to 10 samples per second
+frequency_slider.pack(pady=10)
+
 # Variables for IP and port
 ip_var = StringVar(value="127.0.0.1")
 port_var = StringVar(value="5006")
 
 # Data UI display
-time_label = Label(root, text="", font=("Helvetica", 18))  # Increased font size
+time_label = Label(root, text="", font=("Helvetica", 8))  # Increased font size
 time_label.pack(pady=50)
 time_label.pack(padx=50)
+time_label = Label(root, text=f"Samples/Sec", font=("Helvetica", 8))
+
 
 # IP configuration
 ip_entry = Entry(root, textvariable=ip_var, font=("Helvetica", 12), width=15)
