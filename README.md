@@ -14,7 +14,7 @@ Depends on the script, i.e. UDP_2_LSL requires LSL library already installed in 
 
 While is possible to broadcast and multicast udp packages in the network, network capacity can become easily flooded with data (even in a fast Local network).
 Communication success it will depend then on the weakest network device (computer(headset/mobile/...) and not only the main router/switch offering the net architecture.
-Recommendation is to point the transmitters to target the IP address of the receivers.
+Recommendation is to point the transmitters to target the IP address of the receivers. In that case receivers doesn't need to point to the transmitters, you can leave the address field empty and click in listen/receive.
 
 ## UDPClockTx.py
 
