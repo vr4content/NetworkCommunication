@@ -1,8 +1,10 @@
 # NetworkCommunication
 
-This repository contains a series of scripts to help to move data between different softwares using python and UDP packages.
+This repository contains a series of scripts to help to move data between different pieces of software using python and UDP packages.
 
-Data UDP format it will change depending on the requirement, by now you can find the initial json_schema and an example.
+Scripts are right now in development and are ment to be edited and adapted to your needs, so expect changes, additions or missing things bits on this documentation.
+
+Data UDP format it will change depending on the requirements, by now you can find the initial json_schema and an json file example.
 
 ## UDPClockTx.py
 
@@ -34,5 +36,5 @@ You can also modify on the fly the sampling ratio with the slider from 1 sample 
 This script combines three tasks:
 - receives an UDP clock
 - receives positional data from UDP (UE)
-- Stream one LSL stream per property found in the positonal data.
+- Stream one LSL stream per property found in the positional data.
 
