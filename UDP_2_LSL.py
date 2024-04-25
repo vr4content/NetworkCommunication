@@ -2,8 +2,8 @@ import json
 import math
 import socket
 import threading
-from datetime import datetime, time
-from time import sleep
+from datetime import datetime
+import time
 from tkinter import Tk, Label, Button, Entry, StringVar, Frame, IntVar, Checkbutton, Scrollbar, BooleanVar
 
 from pylsl import StreamInfo, StreamOutlet, local_clock, pylsl
@@ -13,6 +13,7 @@ from pylsl import StreamInfo, StreamOutlet, local_clock, pylsl
 
 def receive_udp_clock():
     global running_udp_clock
+    global time_received
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((udp_clock_ip_var.get(), int(ucp_clock_port_var.get())))
@@ -137,20 +138,22 @@ def push_data(property_name):
             #TODO another option is to change the local clock of this machine based on the udp clock received
             if send_timecode_var.get():
                 #user wants to attach time sync with the stream
-                current_datetime = datetime.datetime.now()
-                timestamp = pylsl.local_clock()
-                if False: #udp clock activate
-                    timestamp = current_datetime.timestamp()
-                outlet_info.push_sample(data, timestamp)
+                if False:
+                #if running_udp_clock:
+                    #grab timestamp from udp clock
+                    current_datetime = datetime.datetime.now()
+                    timestamp = pylsl.local_clock()
+                else:
+                    outlet_info.push_sample(data, local_clock())
             else:
+                #option with no timestamp
                 outlet_info.push_sample(data)
-            #option with no timestamp
-            outlet_info.push_sample(data)
+
             # Update the GUI
             lsl_data_labels[property_name].config(text=f"{property_name}: x={data[0]}, y={data[1]}, z={data[2]}")
         else:
             print(f"{property_name} not found in properties")
-        sleep(1.0 / lsl_samples_var.get())
+        time.sleep(1.0 / lsl_samples_var.get())
 
 def click_on_start_lsl_streams():
     global running_lsl_stream
@@ -173,7 +176,8 @@ root.title("UDP to LSL")
 root.minsize(300, 300)
 
 # UDP RX Clock part
-
+running_udp_clock: bool = False
+time_received = time.time()
 udp_clock_rx_title_Label = Label(root, text="UDP Clock Receiver", font=('Helvetica', 18))
 udp_clock_rx_title_Label.pack(pady=5)
 
@@ -268,7 +272,7 @@ lsl_data_display_frame.pack(padx=10, pady=10)
 lsl_data_labels = {}
 
 send_timecode_var = BooleanVar(value=False)
-send_timecode_checkbox = Checkbutton(root, text="Send Timecode", var=send_timecode_var, onvalue=True, offvalue=False, font=('Helvetica', 12))
+send_timecode_checkbox = Checkbutton(root, text="Send Timecode", variable=send_timecode_var, onvalue=True, offvalue=False, font=('Helvetica', 12))
 send_timecode_checkbox.pack(padx=10, pady=10)
 
 lsl_ui_frame = Frame(root)
