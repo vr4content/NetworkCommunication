@@ -10,7 +10,8 @@ def send_time():
     global running
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
+    #TODO maybe integrate in the interface the option to broadcast?
+    #sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     target_ip = ip_var.get()
     target_port = int(port_var.get())
 
