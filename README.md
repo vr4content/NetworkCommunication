@@ -49,3 +49,13 @@ This script combines three tasks:
 - receives positional data from UDP (UE)
 - Stream one LSL stream per property found in the positional data.
 
+![image](https://github.com/JuanObiJuan/NetworkCommunication/assets/1729541/d29d76cc-1ade-4b98-9ac9-9e7f2d1e5fb3)
+
+You can configure if you want to embed timecode data in the streams and the sampling ratio or samples per second.
+
+After this script replicates the lsl streams, you can open any sofwtare LSL friendly to visualize or record streams.
+
+
+
+
+
