@@ -76,4 +76,11 @@ stop_button = Button(root, text="Stop Listening", command=stop_listening, state=
 stop_button.pack(pady=10)
 stop_button.pack(ipady=20)
 
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+
+your_local_ip = Label(root, text="your local ip: "+IPAddr, font=("Helvetica", 8))
+your_local_ip.pack(pady=10)
+your_local_ip.pack(ipady=20)
+
 root.mainloop()

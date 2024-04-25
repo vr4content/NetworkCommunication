@@ -3,6 +3,8 @@ import threading
 from datetime import datetime
 import time
 from tkinter import Tk, Label, Button, Entry, StringVar
+import socket
+
 
 def send_time():
     global running
@@ -72,5 +74,12 @@ start_button.pack(ipady=20)
 stop_button = Button(root, text="Stop Sending", command=stop_sending, state="disabled")
 stop_button.pack(pady=10)
 stop_button.pack(ipady=20)
+
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+
+your_local_ip = Label(root, text="your local ip: "+IPAddr, font=("Helvetica", 8))
+your_local_ip.pack(pady=10)
+your_local_ip.pack(ipady=20)
 
 root.mainloop()

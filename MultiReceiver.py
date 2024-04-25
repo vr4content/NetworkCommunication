@@ -172,4 +172,11 @@ udp_data_rx_stop_button = Button(udp_data_rx_button_frame, text="Stop listening 
                                  state="disabled")
 udp_data_rx_stop_button.pack(side="left", padx=5, ipady=20)
 
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+
+your_local_ip = Label(root, text="your local ip: "+IPAddr, font=("Helvetica", 8))
+your_local_ip.pack(pady=10)
+your_local_ip.pack(ipady=20)
+
 root.mainloop()

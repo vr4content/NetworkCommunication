@@ -294,4 +294,12 @@ lsl_start_button.pack(side="left", padx=5, ipady=20)
 lsl_stop_button = Button(lsl_button_frame, text="Stop LSL Stream", command=click_on_stop_lsl_streams, state="disabled")
 lsl_stop_button.pack(side="left", padx=5, ipady=20)
 
+#info
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+
+your_local_ip = Label(root, text="your local ip: "+IPAddr, font=("Helvetica", 8))
+your_local_ip.pack(pady=10)
+your_local_ip.pack(ipady=20)
+
 root.mainloop()
