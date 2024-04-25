@@ -4,7 +4,11 @@ This repository contains a series of scripts to help to move data between differ
 
 Scripts are right now in development and are ment to be edited and adapted to your needs, so expect changes, additions or missing things bits on this documentation.
 
-Data UDP format it will change depending on the requirements, by now you can find the initial json_schema and an json file example.
+Data UDP format it will change depending on the requirements, by now you can find the initial json_schema and a json file example.
+
+## Dependencies
+
+Depends on the script, i.e. UDP_2_LSL requires LSL library already installed in your system, you can install it with brew,pip or others depending on your os
 
 ## UDPClockTx.py
 
