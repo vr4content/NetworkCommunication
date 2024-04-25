@@ -1,12 +1,10 @@
 import json
-import math
 import socket
 import threading
 from datetime import datetime
 import time
 from tkinter import Tk, Label, Button, Entry, StringVar, Frame, IntVar, Checkbutton, Scrollbar, BooleanVar
-
-from pylsl import StreamInfo, StreamOutlet, local_clock, pylsl
+from pylsl import StreamInfo, StreamOutlet, local_clock
 
 
 #UDP clock rx functions
@@ -298,7 +296,7 @@ lsl_stop_button.pack(side="left", padx=5, ipady=20)
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
 
-your_local_ip = Label(root, text="your local ip: "+IPAddr, font=("Helvetica", 8))
+your_local_ip = Label(root, text="your local ip: "+IPAddr, font=("Helvetica", 14))
 your_local_ip.pack(pady=10)
 your_local_ip.pack(ipady=20)
 
