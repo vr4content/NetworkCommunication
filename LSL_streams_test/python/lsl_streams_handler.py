@@ -17,22 +17,6 @@ class LSLStreamHandler:
             "active": True,
         }
 
-    def create_string_stream(self, name, stream_type, channel_id, key="key", value="value", heartbeat=None):
-        info = StreamInfo(name, stream_type, 2, 0, 'string', channel_id)
-        outlet = StreamOutlet(info)
-        self.streams[channel_id] = {
-            "outlet": outlet,
-            "type": "string",
-            "active": True,
-            "key": key,
-            "value": value,
-            "heartbeat": heartbeat,
-            "thread": None
-        }
-        if heartbeat:
-            self.streams[channel_id]["thread"] = threading.Thread(target=self._send_heartbeat, args=(outlet, heartbeat))
-            self.streams[channel_id]["thread"].start()
-
     def create_float_stream(self, name, stream_type, channel_id, sampling_rate):
         info = StreamInfo(name, stream_type, 1, sampling_rate, 'float32', channel_id)
         outlet = StreamOutlet(info)
@@ -42,16 +26,16 @@ class LSLStreamHandler:
             "active": True,
         }
 
-    def _send_heartbeat(self, outlet, heartbeat):
-        while True:
-            outlet.push_sample(["", ""], local_clock())
-            time.sleep(heartbeat)
-
-    def push_string_data(self, channel_id, key, value):
-        if channel_id in self.streams and self.streams[channel_id]["type"] == "string":
-            outlet = self.streams[channel_id]["outlet"]
-            outlet.push_sample([key, value], local_clock())
-
+    def create_marker_stream(self, name, stream_type, channel_id):
+        # Marker stream with 2 string channels
+        info = StreamInfo(name, stream_type, 1, 0, 'string', channel_id)
+        outlet = StreamOutlet(info)
+        self.streams[channel_id] = {
+            "outlet": outlet,
+            "type": "marker",
+            "active": True,
+        }
+   
     def push_vector_data(self, channel_id, x, y, z):
         if channel_id in self.streams and self.streams[channel_id]["type"] == "vector3":
             outlet = self.streams[channel_id]["outlet"]
@@ -61,6 +45,11 @@ class LSLStreamHandler:
         if channel_id in self.streams and self.streams[channel_id]["type"] == "float":
             outlet = self.streams[channel_id]["outlet"]
             outlet.push_sample([value], local_clock())
+
+    def push_marker_data(self, channel_id, key, value):
+        if channel_id in self.streams and self.streams[channel_id]["type"] == "marker":
+            outlet = self.streams[channel_id]["outlet"]
+            outlet.push_sample( [value], local_clock())
 
     def stop_stream(self, channel_id):
         if channel_id in self.streams:
