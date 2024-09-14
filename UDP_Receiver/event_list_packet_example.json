@@ -1,0 +1,6 @@
+{
+    "event": {
+        "event_key_1": "value for this event key 1",
+        "event_key_2": "value for this event key 2"
+    }
+}
