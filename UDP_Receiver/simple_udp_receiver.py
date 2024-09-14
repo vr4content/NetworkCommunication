@@ -83,8 +83,8 @@ def udp_listener_float(host='0.0.0.0', port=8081, float_dict=None):
         try:
             json_data = json.loads(utf8_text)
             
-            # Update the float_dict with the received float data
-            float_dict.update({item['key']: item['value'] for item in json_data.get('float', [])})
+            # Update the float_dict with the received float data (new format)
+            float_dict.update(json_data.get('float', {}))
             
             # Print the float data
             print("Received Float data:")
@@ -112,35 +112,3 @@ if __name__ == "__main__":
     # Join threads to keep them running
     vector3_thread.join()
     float_thread.join()
-
-
-# {
-#     "float": [
-#         {
-#             "key": "eye_left",
-#             "value": 0.1 
-#         },
-#         {
-#             "key": "eye_right",
-#             "value": 0.9
-#         }
-#     ]
-# }
-
-
-# {
-#     "vector3": [
-#         {
-#             "vector_name": "user_head_position",
-#             "x": -197.7,
-#             "y": 197.78,
-#             "z": 297.4
-#         },
-#         {
-#             "vector_name": "user_head_rotation",
-#             "x": 79.63,
-#             "y": 79.63,
-#             "z": 79.65
-#         }
-#     ]
-# }
