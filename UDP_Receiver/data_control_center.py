@@ -17,11 +17,11 @@ class DataControlCenter:
         
         # Top text
         title_label = tk.Label(root, text="Data Control Center", font=("Arial", 16))
-        title_label.pack(pady=10)
-        
-        # UDP Input Frame
+        title_label.grid(row=0, column=0, columnspan=2, pady=10)
+
+        # UDP Input Frame (left column)
         udp_frame = tk.LabelFrame(root, text="UDP Input", padx=10, pady=10)
-        udp_frame.pack(padx=10, pady=10, fill="x")
+        udp_frame.grid(row=1, column=0, padx=10, pady=10, sticky="n")
 
         # Subframe for Vector3
         self.vector3_frame = self.create_listener_frame(udp_frame, "Vector3", 8080, self.start_stop_vector3)
@@ -37,6 +37,23 @@ class DataControlCenter:
         self.event_frame = self.create_listener_frame(udp_frame, "Event", 8082, self.start_stop_event)
         self.event_data_table = self.create_data_table(self.event_frame)
         self.event_packets_label, self.event_error_label = self.create_packets_and_error_label(self.event_frame)
+
+        # Button to start/stop listening on all ports
+        self.all_button = tk.Button(udp_frame, text="Start Listening All Ports", command=self.start_stop_all, bg="red", fg="black")
+        self.all_button.pack(pady=10)
+
+        # LSL Output Frame (right column)
+        lsl_frame = tk.LabelFrame(root, text="LSL Output", padx=10, pady=10)
+        lsl_frame.grid(row=1, column=1, padx=10, pady=10, sticky="n")
+
+        # Subframe for LSL Vector3 Output
+        self.lsl_vector3_frame = self.create_lsl_output_frame(lsl_frame, "Vector3")
+        
+        # Subframe for LSL Float Output
+        self.lsl_float_frame = self.create_lsl_output_frame(lsl_frame, "Float")
+        
+        # Subframe for LSL Event Output
+        self.lsl_event_frame = self.create_lsl_output_frame(lsl_frame, "Event")
 
         # Update data loop
         self.update_data()
@@ -60,6 +77,22 @@ class DataControlCenter:
         toggle_button.grid(row=0, column=4)
 
         setattr(self, f"{label.lower()}_port_entry", port_entry)  # Save port entry for later reference
+        setattr(self, f"{label.lower()}_toggle_button", toggle_button)  # Save button reference
+
+        return subframe
+
+    def create_lsl_output_frame(self, parent, label):
+        subframe = tk.LabelFrame(parent, text=label, padx=10, pady=10)
+        subframe.pack(fill="x", pady=5)
+
+        # Samples/second input
+        tk.Label(subframe, text="Samples/second:").grid(row=0, column=0)
+        samples_entry = tk.Entry(subframe)
+        samples_entry.grid(row=0, column=1)
+
+        # Start/Stop button
+        toggle_button = tk.Button(subframe, text="Start LSL", bg="red", fg="black")
+        toggle_button.grid(row=0, column=2)
 
         return subframe
 
@@ -117,6 +150,25 @@ class DataControlCenter:
         button.config(bg=new_color)
         if button['text'] == "Listening...":
             button.after(500, lambda: self.flash_button(button))  # Continue flashing
+
+    def start_stop_all(self):
+        if self.all_button['text'] == "Start Listening All Ports":
+            self.start_all_listeners()
+            self.all_button.config(text="Stop Listening All Ports", bg="green", fg="black")
+            self.flash_button(self.all_button)
+        else:
+            self.stop_all_listeners()
+            self.all_button.config(text="Start Listening All Ports", bg="red", fg="black")
+
+    def start_all_listeners(self):
+        self.start_stop_vector3(self.vector3_port_entry, self.vector3_toggle_button)
+        self.start_stop_float(self.float_port_entry, self.float_toggle_button)
+        self.start_stop_event(self.event_port_entry, self.event_toggle_button)
+
+    def stop_all_listeners(self):
+        self.start_stop_vector3(self.vector3_port_entry, self.vector3_toggle_button)
+        self.start_stop_float(self.float_port_entry, self.float_toggle_button)
+        self.start_stop_event(self.event_port_entry, self.event_toggle_button)
 
     def update_data(self):
         # Update Vector3 data
