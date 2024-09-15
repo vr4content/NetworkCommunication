@@ -2,6 +2,7 @@ import socket
 import struct
 import json
 import threading
+import time
 
 class UDPListener:
     def __init__(self):
@@ -11,6 +12,9 @@ class UDPListener:
         self.event_dict = {}
         self.threads = {}
         self.running_flags = {}  # Flags to control thread execution
+        self.packet_counters = {}  # Stores the number of packets per second per listener
+        self.packet_rates = {}  # Stores the calculated packet rate per second per listener
+        self.error_flags = {}  # Stores error flags for JSON parsing per listener
 
 
     def start_listener(self, data_type, port):
@@ -18,8 +22,11 @@ class UDPListener:
             print(f"{data_type} listener is already running on port {port}.")
             return
         
-        # Create a running flag for this listener
+        # Create running flag, packet counter, and error flag for this listener
         self.running_flags[data_type] = True
+        self.packet_counters[data_type] = 0
+        self.packet_rates[data_type] = 0
+        self.error_flags[data_type] = False  # Reset error flag
 
         # Start listener thread
         thread = threading.Thread(target=self.udp_listener, args=(data_type, port))
@@ -27,6 +34,11 @@ class UDPListener:
         thread.start()
         self.threads[data_type] = thread
         print(f"{data_type} listener started on port {port}.")
+
+        # Start packet rate calculator thread
+        rate_thread = threading.Thread(target=self.calculate_packet_rate, args=(data_type,))
+        rate_thread.daemon = True
+        rate_thread.start()
 
     def stop_listener(self, data_type):
         if data_type not in self.threads or not self.running_flags[data_type]:
@@ -36,6 +48,9 @@ class UDPListener:
         # Set the running flag to False to stop the thread
         self.running_flags[data_type] = False
         print(f"{data_type} listener stopping...")
+        # Reset packet rate and counter
+        self.packet_counters[data_type] = 0
+        self.packet_rates[data_type] = 0
 
     def udp_listener(self, data_type, port, host='0.0.0.0'):
         # Create a UDP socket
@@ -49,6 +64,7 @@ class UDPListener:
             sock.settimeout(1.0)  # Timeout to avoid blocking forever
             try:
                 data, addr = sock.recvfrom(1024)  # Buffer size of 1024 bytes
+                self.packet_counters[data_type] += 1  # Increment packet counter
             except socket.timeout:
                 continue  # Continue the loop and check the flag again
 
@@ -76,6 +92,7 @@ class UDPListener:
                 print(f"Failed to decode JSON data. Error: {e.msg}")
                 print(f"Error location: line {e.lineno}, column {e.colno}")
                 print(f"Received UTF-8 text: {utf8_text}")
+                self.error_flags[data_type] = True  # Set error flag
 
         sock.close()
 
@@ -103,6 +120,19 @@ class UDPListener:
             print(f"Event Key: {key}, Value: {value}")
         print("-" * 30)
 
+    def calculate_packet_rate(self, data_type):
+        while self.running_flags.get(data_type, False):
+            time.sleep(1)
+            self.packet_rates[data_type] = self.packet_counters[data_type]
+            self.packet_counters[data_type] = 0  # Reset counter after calculating the rate
+            print(f"{data_type} packet rate: {self.packet_rates[data_type]} packets/sec")
+
+    def get_packet_rate(self, data_type):
+        return self.packet_rates.get(data_type, 0)
+
+    def get_error_flag(self, data_type):
+        return self.error_flags.get(data_type, False)
+
     def get_vector3_data(self):
         return self.vector3_dict
 
@@ -111,5 +141,3 @@ class UDPListener:
 
     def get_event_data(self):
         return self.event_dict
-
-
