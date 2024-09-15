@@ -58,4 +58,4 @@ if __name__ == "__main__":
         test_event_data()
         
         # Wait a little before sending the next set of data
-        time.sleep(1)
+        time.sleep(1/24)
