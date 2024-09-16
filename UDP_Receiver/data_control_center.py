@@ -184,7 +184,7 @@ class DataControlCenter:
         self.update_packets_rate_and_error(self.event_packets_label, self.event_error_label, "Event")
 
         # Schedule next update
-        root.after(1000, self.update_data)
+        root.after(50, self.update_data)
 
     def update_table(self, table, data_dict):
         # Clear table
