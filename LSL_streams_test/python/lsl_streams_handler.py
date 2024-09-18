@@ -28,7 +28,7 @@ class LSLStreamHandler:
 
     def create_marker_stream(self, name, stream_type, channel_id):
         # Marker stream with 2 string channels
-        info = StreamInfo(name, stream_type, 1, 0, 'string', channel_id)
+        info = StreamInfo(name, stream_type, 2, 0, 'string', channel_id)
         outlet = StreamOutlet(info)
         self.streams[channel_id] = {
             "outlet": outlet,
@@ -49,7 +49,7 @@ class LSLStreamHandler:
     def push_marker_data(self, channel_id, key, value):
         if channel_id in self.streams and self.streams[channel_id]["type"] == "marker":
             outlet = self.streams[channel_id]["outlet"]
-            outlet.push_sample( [value], local_clock())
+            outlet.push_sample( [key,value], local_clock())
 
     def stop_stream(self, channel_id):
         if channel_id in self.streams:
