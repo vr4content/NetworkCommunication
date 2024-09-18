@@ -6,6 +6,7 @@ from tkinter import filedialog, messagebox
 import os
 import threading
 import json
+import re
 
 # Initialize variables
 recording = False
@@ -60,12 +61,14 @@ def listen_for_commands():
     try:
         udp_socket.settimeout(0.1)
         message, addr = udp_socket.recvfrom(1024)
+        print("message received... ")
+        print(message.decode())
         message = message.decode().split(':')
-        if message[0] == "start":
-            filename = message[1]  # Set the filename received from the message
+        if "start" in message[0]:
+            filename = re.sub(r'[^\w\-_\. ]', '', message[1])  # Allow only valid filename characters
             filename_display.config(text=filename)  # Update the filename display
             start_recording()
-        elif message[0] == "stop":
+        elif "stop" in message[0]:
             stop_recording()
     except socket.timeout:
         pass
