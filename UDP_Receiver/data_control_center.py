@@ -3,18 +3,21 @@ from tkinter import ttk
 import configparser
 import os
 from udp_data_handler import UDPListener
+from lsl_streams_handler import LSLStreamHandler  # Import LSLStreamHandler
 
 class DataControlCenter:
     CONFIG_FILE = "config.ini"
 
     def __init__(self, root):
         self.listener = UDPListener()
+        self.lsl_handler = LSLStreamHandler()  # Initialize LSLStreamHandler
         self.config = configparser.ConfigParser()
         self.load_config()
+        self.vector3_lsl_controls = {}  # Dictionary to keep track of LSL controls for Vector3 data
 
         # Window title
         root.title("Data Control Center")
-        
+
         # Top text
         title_label = tk.Label(root, text="Data Control Center", font=("Arial", 16))
         title_label.grid(row=0, column=0, columnspan=2, pady=10)
@@ -27,6 +30,7 @@ class DataControlCenter:
         self.vector3_frame = self.create_listener_frame(udp_frame, "Vector3", 8080, self.start_stop_vector3)
         self.vector3_data_table = self.create_data_table(self.vector3_frame)
         self.vector3_packets_label, self.vector3_error_label = self.create_packets_and_error_label(self.vector3_frame)
+        self.create_vector3_lsl_frame()  # Create LSL control frame for Vector3
 
         # Subframe for Float
         self.float_frame = self.create_listener_frame(udp_frame, "Float", 8081, self.start_stop_float)
@@ -48,10 +52,10 @@ class DataControlCenter:
 
         # Subframe for LSL Vector3 Output
         self.lsl_vector3_frame = self.create_lsl_output_frame(lsl_frame, "Vector3")
-        
+
         # Subframe for LSL Float Output
         self.lsl_float_frame = self.create_lsl_output_frame(lsl_frame, "Float")
-        
+
         # Subframe for LSL Event Output
         self.lsl_event_frame = self.create_lsl_output_frame(lsl_frame, "Event")
 
@@ -114,7 +118,7 @@ class DataControlCenter:
         # Set a fixed height for the table
         table.configure(height=5)  # Adjust this value to set the number of rows shown
 
-        return table    
+        return table
 
     def create_packets_and_error_label(self, frame):
         packets_label = tk.Label(frame, text="0 packets/s", font=("Arial", 10))
@@ -124,6 +128,10 @@ class DataControlCenter:
         error_label.grid(row=0, column=3)  # Add error flag next to packet rate label
 
         return packets_label, error_label
+
+    def create_vector3_lsl_frame(self):
+        self.vector3_lsl_frame = tk.LabelFrame(self.vector3_frame, text="LSL Streams", padx=10, pady=10)
+        self.vector3_lsl_frame.grid(row=2, column=0, columnspan=5, pady=5, sticky="nsew")
 
     def start_stop_vector3(self, port_entry, toggle_button):
         self.toggle_listener("Vector3", port_entry, toggle_button)
@@ -174,6 +182,7 @@ class DataControlCenter:
         # Update Vector3 data
         self.update_table(self.vector3_data_table, self.listener.get_vector3_data())
         self.update_packets_rate_and_error(self.vector3_packets_label, self.vector3_error_label, "Vector3")
+        self.update_vector3_lsl_controls()  # Update LSL controls for Vector3
 
         # Update Float data
         self.update_table(self.float_data_table, self.listener.get_float_data())
@@ -203,13 +212,45 @@ class DataControlCenter:
         # Update packet rate
         packet_rate = self.listener.get_packet_rate(data_type)
         packets_label.config(text=f"{packet_rate} packets/s")
-        
+
         # Update error flag
         error_flag = self.listener.get_error_flag(data_type)
         if error_flag:
             error_label.config(text="Error", bg="red")
         else:
             error_label.config(text="No Error", bg="green")
+
+    def update_vector3_lsl_controls(self):
+        vector3_data = self.listener.get_vector3_data()
+        for key in vector3_data:
+            if key not in self.vector3_lsl_controls:
+                # Create UI controls for this key
+                row = len(self.vector3_lsl_controls)
+                label = tk.Label(self.vector3_lsl_frame, text=key)
+                label.grid(row=row, column=0)
+                button = tk.Button(self.vector3_lsl_frame, text="Start LSL", bg="red",
+                                   command=lambda k=key: self.toggle_vector3_lsl_stream(k))
+                button.grid(row=row, column=1)
+                self.vector3_lsl_controls[key] = {'button': button, 'active': False}
+            else:
+                # Check if we need to push data to LSL
+                if self.vector3_lsl_controls[key]['active']:
+                    value = vector3_data[key]
+                    x, y, z = value['x'], value['y'], value['z']
+                    self.lsl_handler.push_vector_data(key, x, y, z)
+
+    def toggle_vector3_lsl_stream(self, key):
+        control = self.vector3_lsl_controls[key]
+        if not control['active']:
+            # Start LSL stream
+            self.lsl_handler.create_vector3_stream(name=key, stream_type="Vector3", channel_id=key, sampling_rate=0)
+            control['active'] = True
+            control['button'].config(text="Stop LSL", bg="green")
+        else:
+            # Stop LSL stream
+            self.lsl_handler.stop_stream(key)
+            control['active'] = False
+            control['button'].config(text="Start LSL", bg="red")
 
     def load_config(self):
         if os.path.exists(self.CONFIG_FILE):
