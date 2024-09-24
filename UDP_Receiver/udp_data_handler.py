@@ -99,33 +99,33 @@ class UDPListener:
     def process_vector3(self, json_data):
         vector3_data = json_data.get('vector3', {})
         self.vector3_dict.update(vector3_data)
-        print("Received Vector3 data:")
-        for vector_name, values in vector3_data.items():
-            print(f"Vector Name: {vector_name}, x: {values['x']}, y: {values['y']}, z: {values['z']}")
-        print("-" * 30)
+        # print("Received Vector3 data:")
+        # for vector_name, values in vector3_data.items():
+        #     print(f"Vector Name: {vector_name}, x: {values['x']}, y: {values['y']}, z: {values['z']}")
+        # print("-" * 30)
 
     def process_float(self, json_data):
         float_data = json_data.get('float', {})
         self.float_dict.update(float_data)
-        print("Received Float data:")
-        for key, value in float_data.items():
-            print(f"Key: {key}, Value: {value}")
-        print("-" * 30)
+        # print("Received Float data:")
+        # for key, value in float_data.items():
+        #     print(f"Key: {key}, Value: {value}")
+        # print("-" * 30)
 
     def process_event(self, json_data):
         event_data = json_data.get('event', {})
         self.event_dict.update(event_data)
-        print("Received Event data:")
-        for key, value in event_data.items():
-            print(f"Event Key: {key}, Value: {value}")
-        print("-" * 30)
+        # print("Received Event data:")
+        # for key, value in event_data.items():
+        #     print(f"Event Key: {key}, Value: {value}")
+        # print("-" * 30)
 
     def calculate_packet_rate(self, data_type):
         while self.running_flags.get(data_type, False):
             time.sleep(1)
             self.packet_rates[data_type] = self.packet_counters[data_type]
             self.packet_counters[data_type] = 0  # Reset counter after calculating the rate
-            print(f"{data_type} packet rate: {self.packet_rates[data_type]} packets/sec")
+            # print(f"{data_type} packet rate: {self.packet_rates[data_type]} packets/sec")
 
     def get_packet_rate(self, data_type):
         return self.packet_rates.get(data_type, 0)
