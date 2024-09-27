@@ -79,7 +79,7 @@ class UDPListener:
                 continue
 
             utf8_text = data[4:4 + utf8_size].decode('utf-8', errors='ignore').rstrip('\x00')
-            print(utf8_text)
+            #print(utf8_text)
             try:
                 json_data = json.loads(utf8_text)
                 if data_type == 'Vector3':
