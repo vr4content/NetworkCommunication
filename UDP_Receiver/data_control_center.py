@@ -183,7 +183,17 @@ class DataControlCenter:
                 value = event_data[key]
                 # Push event data
                 self.lsl_handler.push_marker_data(channel_id="event_marker", key=key, value=value)
-                # Remove the event to avoid pushing it again
+                if key=="provant_id":
+                    #save global variable for provant_id
+                    self.provant_id = value
+                    #save global timestamp
+                    self.provant_id_timestamp = time.time()
+                if key=="level_title":
+                    #save global variable for level_title
+                    self.level_title = value
+                #TODO CSV file writer
+
+                #Remove the event to avoid pushing it again
                 del self.listener.event_dict[key]
 
         # Schedule next update
