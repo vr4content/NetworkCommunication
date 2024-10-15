@@ -6,6 +6,7 @@ import threading
 import time
 from udp_data_handler import UDPListener
 from lsl_streams_handler import LSLStreamHandler  # Import LSLStreamHandler
+import csv
 
 class DataControlCenter:
     CONFIG_FILE = "config.ini"
@@ -56,6 +57,10 @@ class DataControlCenter:
 
         # Save config on close
         root.protocol("WM_DELETE_WINDOW", self.on_close)
+
+        self.AddCSVLine('example.csv', ['Value1', 'Value2', 'Value3'])
+    
+        
 
     def create_data_table(self, parent, label):
         columns = ('Key', 'Value')
@@ -186,18 +191,26 @@ class DataControlCenter:
                 if key=="provant_id":
                     #save global variable for provant_id
                     self.provant_id = value
+                    self.provant_id_timestamp = time.time()
+                    self.csv_file_name = self.provant_id + self.provant_id_timestamp + ".csv"
+                    print("prinvat_id"+self.provant_id)
                     #save global timestamp
                     self.provant_id_timestamp = time.time()
                 if key=="level_title":
                     #save global variable for level_title
                     self.level_title = value
+                if key=="answer":
+                    #save global variable for level_title
+                    self.answer = value
+                    self.AddCSVLine(self.csv_file_name, [time.time(), self.level_title, self.answer])
+
                 #TODO CSV file writer
 
                 #Remove the event to avoid pushing it again
                 del self.listener.event_dict[key]
 
         # Schedule next update
-        root.after(50, self.update_data)
+        root.after(5, self.update_data)
 
     def update_table(self, table, data_dict):
         # Clear table
@@ -227,7 +240,28 @@ class DataControlCenter:
         self.save_config()
         root.destroy()
 
+    def AddCSVLine(self,filename, row_data):
+        # Define the full path to the file in the root of D:
+        file_path = os.path.join('D:\\', filename)
+
+        # Check if the file exists
+        file_exists = os.path.isfile(file_path)
+
+        # Open the file in append mode ('a'), which creates the file if it does not exist
+        with open(file_path, mode='a', newline='') as file:
+            writer = csv.writer(file)
+        
+            # If the file does not exist, write the header (optional)
+            if not file_exists:
+                writer.writerow(["timestamp", "key", "value"])  # Change headers as needed
+        
+            # Write the new row data
+            writer.writerow(row_data)
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = DataControlCenter(root)
     root.mainloop()
+
+
+#provantId
