@@ -1,3 +1,4 @@
+from datetime import datetime
 import tkinter as tk
 from tkinter import ttk
 import configparser
@@ -46,7 +47,7 @@ class DataControlCenter:
         tk.Label(lsl_frame, text="Samples/second:").pack()
         self.samples_entry = tk.Entry(lsl_frame)
         self.samples_entry.pack()
-        self.samples_entry.insert(0, "10")  # Default value
+        self.samples_entry.insert(0, "30")  # Default value
 
         # LSL Start/Stop button
         self.lsl_button = tk.Button(lsl_frame, text="Start LSL Streams", command=self.start_stop_lsl_streams, bg="red", fg="black")
@@ -58,7 +59,7 @@ class DataControlCenter:
         # Save config on close
         root.protocol("WM_DELETE_WINDOW", self.on_close)
 
-        self.AddCSVLine('example.csv', ['Value1', 'Value2', 'Value3'])
+     
     
         
 
@@ -158,6 +159,7 @@ class DataControlCenter:
                     self.lsl_handler.create_float_stream(name=key, stream_type="Float", channel_id=key, sampling_rate=self.lsl_sampling_rate)
                 # Push data
                 self.lsl_handler.push_float_data(channel_id=key, value=value)
+                
             time.sleep(interval)
 
     def flash_button(self, button):
@@ -188,23 +190,32 @@ class DataControlCenter:
                 value = event_data[key]
                 # Push event data
                 self.lsl_handler.push_marker_data(channel_id="event_marker", key=key, value=value)
+                print("sending lsl "+key+" "+value)
                 if key=="provant_id":
                     #save global variable for provant_id
                     self.provant_id = value
-                    self.provant_id_timestamp = time.time()
-                    self.csv_file_name = self.provant_id + self.provant_id_timestamp + ".csv"
-                    print("prinvat_id"+self.provant_id)
+                    #self.provant_id_timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S")
+                    #self.csv_file_name = self.provant_id + self.provant_id_timestamp + ".csv"
+                    now = datetime.now()
+                    formatted_time = now.strftime("%Y%m%d_%H%M%S")
+
+                    self.csv_file_name = formatted_time+"_"+self.provant_id + "_"+".csv"
+                    
+                    print("pronvat_id "+self.provant_id)
                     #save global timestamp
-                    self.provant_id_timestamp = time.time()
+                   
                 if key=="level_title":
                     #save global variable for level_title
                     self.level_title = value
+                    print("level_title "+self.level_title)
                 if key=="answer":
                     #save global variable for level_title
                     self.answer = value
-                    self.AddCSVLine(self.csv_file_name, [time.time(), self.level_title, self.answer])
+                    print("answer: "+self.answer)
+                    print("adding a line "+self.level_title)
+                    self.AddCSVLine(self.csv_file_name, [str(time.time()), str(self.provant_id), self.level_title, self.answer])
 
-                #TODO CSV file writer
+                
 
                 #Remove the event to avoid pushing it again
                 del self.listener.event_dict[key]
@@ -242,6 +253,7 @@ class DataControlCenter:
 
     def AddCSVLine(self,filename, row_data):
         # Define the full path to the file in the root of D:
+        print("AddCSVLine file  "+filename+" "+row_data[0]+" "+row_data[1]+" "+row_data[2])
         file_path = os.path.join('D:\\', filename)
 
         # Check if the file exists
@@ -253,7 +265,7 @@ class DataControlCenter:
         
             # If the file does not exist, write the header (optional)
             if not file_exists:
-                writer.writerow(["timestamp", "key", "value"])  # Change headers as needed
+                writer.writerow(["timestamp", "provant_id","key", "value"])  # Change headers as needed
         
             # Write the new row data
             writer.writerow(row_data)
