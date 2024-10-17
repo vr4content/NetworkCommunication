@@ -57,7 +57,7 @@ class DataControlCenter:
         self.update_data()
 
         # Save config on close
-        root.protocol("WM_DELETE_WINDOW", self.on_close)
+        #root.protocol("WM_DELETE_WINDOW", self.on_close)
 
      
     
@@ -228,7 +228,7 @@ class DataControlCenter:
         for row in table.get_children():
             table.delete(row)
         # Insert updated data
-        for key, value in data_dict.items():
+        for key, value in list(data_dict.items()):
             if isinstance(value, dict):
                 # For vector3 data, show x, y, z
                 formatted_value = f"x: {value['x']}, y: {value['y']}, z: {value['z']}"
