@@ -1,6 +1,7 @@
 {
     "float": {
-        "float_1": 0.123,
-        "float_2": 0.456
+        "facetracking_blendshape_mouth_open": 0.123,
+        "facetracking_blendshape_left_eye_open": 0.456,
+        "facetracking_blendshape_right_eye_open": 0.456
     }
 }
