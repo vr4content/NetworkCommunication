@@ -59,9 +59,9 @@ class DataControlCenter:
         # Save config on close
         #root.protocol("WM_DELETE_WINDOW", self.on_close)
 
-     
-    
-        
+
+
+
 
     def create_data_table(self, parent, label):
         columns = ('Key', 'Value')
@@ -159,7 +159,7 @@ class DataControlCenter:
                     self.lsl_handler.create_float_stream(name=key, stream_type="Float", channel_id=key, sampling_rate=self.lsl_sampling_rate)
                 # Push data
                 self.lsl_handler.push_float_data(channel_id=key, value=value)
-                
+
             time.sleep(interval)
 
     def flash_button(self, button):
@@ -200,10 +200,10 @@ class DataControlCenter:
                     formatted_time = now.strftime("%Y%m%d_%H%M%S")
 
                     self.csv_file_name = formatted_time+"_"+self.provant_id + "_"+".csv"
-                    
+
                     print("pronvat_id "+self.provant_id)
                     #save global timestamp
-                   
+
                 if key=="level_title":
                     #save global variable for level_title
                     self.level_title = value
@@ -215,7 +215,7 @@ class DataControlCenter:
                     print("adding a line "+self.level_title)
                     self.AddCSVLine(self.csv_file_name, [str(time.time()), str(self.provant_id), self.level_title, self.answer])
 
-                
+
 
                 #Remove the event to avoid pushing it again
                 del self.listener.event_dict[key]
@@ -262,11 +262,11 @@ class DataControlCenter:
         # Open the file in append mode ('a'), which creates the file if it does not exist
         with open(file_path, mode='a', newline='') as file:
             writer = csv.writer(file)
-        
+
             # If the file does not exist, write the header (optional)
             if not file_exists:
                 writer.writerow(["timestamp", "provant_id","key", "value"])  # Change headers as needed
-        
+
             # Write the new row data
             writer.writerow(row_data)
 
